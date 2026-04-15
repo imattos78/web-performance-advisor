@@ -1,2 +1,24 @@
+# Dependencies
+node_modules/
+.pnpm-debug.log*
+
+# Production builds
+build/
+dist/
+out/
+
+# Development
+.plasmo/
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+token.txt
 *.md
-*.txt

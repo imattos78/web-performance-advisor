@@ -1,0 +1,36 @@
+{
+  "name": "web-performance-advisor",
+  "version": "0.0.1",
+  "description": "A browser extension for real-time web page analysis",
+  "author": "imattos78",
+  "license": "MIT",
+  "scripts": {
+    "dev": "plasmo dev",
+    "build": "plasmo build",
+    "package": "plasmo package"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.268",
+    "@types/node": "^20.11.24",
+    "@types/react": "^18.2.61",
+    "@types/react-dom": "^18.2.19",
+    "plasmo": "^0.85.0",
+    "prettier": "^3.2.5",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.3.3"
+  },
+  "manifest": {
+    "host_permissions": [
+      "https://*/*",
+      "http://*/*"
+    ],
+    "permissions": [
+      "activeTab",
+      "tabs"
+    ]
+  }
+}
