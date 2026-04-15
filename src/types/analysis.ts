@@ -54,6 +54,7 @@ export type AnalysisResult = {
   accessibility: AccessibilityAnalysis;
   bestPractices: BestPracticesAnalysis;
   issues: Issue[];
+  scores?: import("../services/scoringService").OverallScore;
 };
 
 export type RuntimeRequestMessage = {

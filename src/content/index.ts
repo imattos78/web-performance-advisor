@@ -13,6 +13,8 @@ import { analyzeSEO } from "../services/seo";
 import { analyzeAccessibility } from "../services/accessibility";
 import { analyzeBestPractices } from "../services/bestPractices";
 
+import { calculateOverallScore } from "../services/scoringService";
+
 export function analyzePage(): AnalysisResult {
   const performance = analyzePerformance();
   const { seo, issues: seoIssues } = analyzeSEO();
@@ -21,7 +23,7 @@ export function analyzePage(): AnalysisResult {
 
   const issues = [...seoIssues, ...accessibilityIssues, ...bestPracticeIssues];
 
-  return {
+  const result: AnalysisResult = {
     url: window.location.href,
     performance,
     seo,
@@ -29,6 +31,11 @@ export function analyzePage(): AnalysisResult {
     bestPractices,
     issues,
   };
+
+  // Calculate scores
+  result.scores = calculateOverallScore(result);
+
+  return result;
 }
 
 chrome.runtime.onMessage.addListener(
