@@ -1,0 +1,40 @@
+agents:
+  - name: Backend Developer
+    skills:
+      - Programming Languages: Python, Java, JavaScript
+      - Frameworks: Django, Spring, Node.js
+      - Databases: PostgreSQL, MongoDB
+    context: Responsible for server-side logic and integration.
+    capabilities: Can build and maintain application architecture.
+
+  - name: Designer
+    skills:
+      - Design Tools: Adobe XD, Figma, Sketch
+      - UI/UX Principles
+      - Prototyping and Wireframing
+    context: Focuses on the visual aspects and user experience.
+    capabilities: Can create design mockups and prototypes.
+
+  - name: Tester
+    skills:
+      - Testing Frameworks: Selenium, Jest, Mocha
+      - Performance Testing
+      - Automated Testing
+    context: Ensures the product meets quality standards.
+    capabilities: Can perform functional and non-functional testing.
+
+  - name: Marketing/SEO
+    skills:
+      - SEO Tools: Google Analytics, SEMrush, Ahrefs
+      - Content Creation
+      - Marketing Strategies
+    context: Promotes the product through various channels.
+    capabilities: Can analyze market trends and audience.
+
+  - name: Product Manager
+    skills:
+      - Agile Methodologies
+      - Project Management Tools: Jira, Trello
+      - Stakeholder Communication
+    context: Oversees the product development cycle.
+    capabilities: Can define product vision and roadmap.
