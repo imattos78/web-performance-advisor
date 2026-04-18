@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { AnalysisResult } from "../types/analysis";
-import { OverallScore } from "../services/scoringService";
+import type { AnalysisResult } from "../types/analysis";
+import type { OverallScore } from "../services/scoringService";
 import ScoreCard from "./components/ScoreCard";
 import IssuesList from "./components/IssuesList";
 import AnalysisButton from "./components/AnalysisButton";
@@ -24,29 +24,26 @@ const Popup: React.FC = () => {
   };
 
   const runAnalysis = async () => {
-    setIsAnalyzing(true);
-    setError(null);
+    console.log("📤 Sending message to content script...")
+  try {
+    const [tab] = await chrome.tabs.query({
+      active: true,
+      currentWindow: true
+    })
 
-    try {
-      // Send message to content script
-      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-
-      if (!tab.id) {
-        throw new Error("No active tab found");
-      }
-
-      const response = await chrome.tabs.sendMessage(tab.id, {
-        type: "RUN_ANALYSIS"
-      });
-
-      setAnalysis(response);
-    } catch (err) {
-      console.error("Analysis failed:", err);
-      setError("Failed to analyze page. Please refresh and try again.");
-    } finally {
-      setIsAnalyzing(false);
+    if (!tab?.id) {
+      throw new Error("No active tab")
     }
-  };
+
+    const response = await chrome.tabs.sendMessage(tab.id, {
+      type: "RUN_ANALYSIS"
+    })
+
+    console.log("Analysis result:", response)
+  } catch (error) {
+    console.error("Analysis failed:", error)
+  }
+}
 
   const getScoreSummary = (scores: OverallScore) => {
     const { total, totalIssues, severityBreakdown } = scores;

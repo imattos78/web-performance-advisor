@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Issue } from "../../types/analysis";
+import type { Issue } from "../../types/analysis";
 
 interface IssuesListProps {
   issues: Issue[];
