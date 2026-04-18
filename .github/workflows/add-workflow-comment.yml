@@ -1,0 +1,23 @@
+name: Add Workflow Comment
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  add-comment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add workflow info comment
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const labels = issue.labels.map(l => `\`${l.name}\``).join(', ');
+            
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: `## 🤖 Workflow Status\n\n✅ Issue created\n📋 Labels: ${labels || 'No labels'}\n\n**Próximos pasos:**\n- Mueve a "In Progress" cuando empieces a trabajar\n- Enlaza a un Pull Request cuando esté listo para revisar\n- Cierra el issue cuando el PR se mergee`
+            })
