@@ -1,0 +1,69 @@
+name: Auto-label Pull Requests
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  label-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Label PR - Backend
+        if: contains(github.event.pull_request.title, '[BACKEND]')
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ['backend-dev', 'type:backend']
+            })
+
+      - name: Label PR - Designer
+        if: contains(github.event.pull_request.title, '[DESIGN]')
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ['designer', 'type:frontend']
+            })
+
+      - name: Label PR - Tester
+        if: contains(github.event.pull_request.title, '[TEST]')
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ['qa-tester', 'type:testing']
+            })
+
+      - name: Label PR - Marketing
+        if: contains(github.event.pull_request.title, '[MARKETING]')
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ['marketing-seo', 'type:documentation']
+            })
+
+      - name: Label PR - Product
+        if: contains(github.event.pull_request.title, '[PRODUCT]')
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ['product-manager', 'type:feature']
+            })
