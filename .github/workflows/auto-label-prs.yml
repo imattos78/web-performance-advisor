@@ -20,6 +20,18 @@ jobs:
               labels: ['backend-dev', 'type:backend']
             })
 
+      - name: Label PR if it touches frontend
+        if: contains(github.event.pull_request.title, '[FRONTEND]')
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ['frontend-dev', 'type:frontend']
+            })
+
       - name: Label PR - Designer
         if: contains(github.event.pull_request.title, '[DESIGN]')
         uses: actions/github-script@v6

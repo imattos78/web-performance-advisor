@@ -1,9 +1,22 @@
 {
   "name": "web-performance-advisor",
+  "displayName": "Web Performance Advisor",
   "version": "0.0.1",
   "description": "A browser extension for real-time web page analysis",
   "author": "imattos78",
   "license": "MIT",
+  "manifest": {
+    "name": "Web Performance Advisor",
+    "description": "A browser extension for real-time web page analysis",
+    "version": "0.0.1",
+    "permissions": [
+      "activeTab",
+      "tabs"
+    ],
+    "host_permissions": [
+      "<all_urls>"
+    ]
+  },
   "scripts": {
     "dev": "plasmo dev",
     "build": "plasmo build",

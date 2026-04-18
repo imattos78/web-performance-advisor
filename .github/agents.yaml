@@ -7,6 +7,28 @@ agents:
     context: Responsible for server-side logic and integration.
     capabilities: Can build and maintain application architecture.
 
+  - name: Frontend Developer
+    id: "frontend-dev"
+    skills:
+      - React/TypeScript UI development
+      - Tailwind CSS
+      - Chrome Extension development
+      - Component implementation
+    context: Responsible for implementing UI components and user interactions
+    capabilities:
+      - Convert design mockups to React components
+      - Implement responsive layouts
+      - Build interactive features
+      - Create component documentation
+      - Handle browser APIs and extension APIs
+    expertise:
+      - React hooks and state management
+      - TypeScript best practices
+      - CSS-in-JS and Tailwind
+      - Chrome Extension APIs
+      - Performance optimization
+    labels: ["frontend-dev", "type:frontend"]
+
   - name: Designer
     skills:
       - Design Tools: Adobe XD, Figma, Sketch

@@ -20,6 +20,18 @@ jobs:
               assignees: ['imattos78']
             })
 
+      - name: Auto-assign Frontend Developer
+        if: contains(github.event.issue.labels.*.name, 'frontend-dev')
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.addAssignees({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              assignees: ['imattos78']
+            })      
+
       - name: Auto-assign Designer
         if: contains(github.event.issue.labels.*.name, 'designer')
         uses: actions/github-script@v6
