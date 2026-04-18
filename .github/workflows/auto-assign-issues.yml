@@ -7,10 +7,13 @@ on:
 jobs:
   assign-by-label:
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
     steps:
       - name: Auto-assign Backend Developer
         if: contains(github.event.issue.labels.*.name, 'backend-dev')
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             github.rest.issues.addAssignees({
@@ -22,7 +25,7 @@ jobs:
 
       - name: Auto-assign Frontend Developer
         if: contains(github.event.issue.labels.*.name, 'frontend-dev')
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             github.rest.issues.addAssignees({
@@ -30,11 +33,11 @@ jobs:
               repo: context.repo.repo,
               issue_number: context.issue.number,
               assignees: ['imattos78']
-            })      
+            })
 
       - name: Auto-assign Designer
         if: contains(github.event.issue.labels.*.name, 'designer')
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             github.rest.issues.addAssignees({
@@ -46,7 +49,7 @@ jobs:
 
       - name: Auto-assign QA Tester
         if: contains(github.event.issue.labels.*.name, 'qa-tester')
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             github.rest.issues.addAssignees({
@@ -58,7 +61,7 @@ jobs:
 
       - name: Auto-assign Marketing/SEO
         if: contains(github.event.issue.labels.*.name, 'marketing-seo')
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             github.rest.issues.addAssignees({
@@ -70,7 +73,7 @@ jobs:
 
       - name: Auto-assign Product Manager
         if: contains(github.event.issue.labels.*.name, 'product-manager')
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             github.rest.issues.addAssignees({
