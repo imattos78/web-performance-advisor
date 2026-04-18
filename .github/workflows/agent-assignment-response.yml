@@ -1,0 +1,350 @@
+name: Agent Assignment & Auto-Response
+
+on:
+  issues:
+    types: [opened, labeled]
+
+jobs:
+  assign-and-respond:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+    steps:
+      - name: Assign and respond to Backend Developer issues
+        if: contains(github.event.issue.labels.*.name, 'backend-dev')
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issueNumber = context.issue.number;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            
+            // Assign issue
+            await github.rest.issues.addAssignees({
+              owner: owner,
+              repo: repo,
+              issue_number: issueNumber,
+              assignees: ['imattos78']
+            });
+            
+            // Add comment with agent response
+            const backendResponse = `## 🔧 Backend Developer Agent Response
+
+I've reviewed this task and I'm ready to start working on it.
+
+### What I'll do:
+- Design and implement the required API endpoints
+- Optimize performance and database queries
+- Ensure proper error handling and validation
+- Write comprehensive backend tests
+- Provide clear documentation for frontend integration
+
+### My Approach:
+1. **Analysis Phase** - Understand requirements and dependencies
+2. **Design Phase** - Plan API architecture and data models
+3. **Implementation Phase** - Write clean, tested code
+4. **Documentation Phase** - Create API specs and integration guide
+
+### Timeline:
+- Estimated effort: [To be determined based on scope]
+- Ready to start: Immediately
+
+### Next Steps:
+- I'll create a branch and start implementation
+- I'll keep updates in this issue thread
+- I'll open a PR when ready for review
+
+Feel free to ask any questions! 💬`;
+            
+            await github.rest.issues.createComment({
+              owner: owner,
+              repo: repo,
+              issue_number: issueNumber,
+              body: backendResponse
+            });
+
+      - name: Assign and respond to Frontend Developer issues
+        if: contains(github.event.issue.labels.*.name, 'frontend-dev')
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issueNumber = context.issue.number;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            
+            // Assign issue
+            await github.rest.issues.addAssignees({
+              owner: owner,
+              repo: repo,
+              issue_number: issueNumber,
+              assignees: ['imattos78']
+            });
+            
+            // Add comment with agent response
+            const frontendResponse = `## 🖥️ Frontend Developer Agent Response
+
+I've reviewed this task and I'm ready to implement the UI/components.
+
+### What I'll do:
+- Convert design mockups into React components
+- Implement responsive layouts with Tailwind CSS
+- Integrate with backend APIs
+- Ensure accessibility (WCAG 2.1 AA) compliance
+- Write component documentation and stories
+- Optimize performance and bundle size
+
+### My Approach:
+1. **Setup Phase** - Review designs and requirements
+2. **Component Phase** - Build reusable component library
+3. **Integration Phase** - Connect to backend APIs
+4. **Testing Phase** - Write component and integration tests
+5. **Polish Phase** - Accessibility and performance optimization
+
+### Timeline:
+- Estimated effort: [To be determined based on design complexity]
+- Ready to start: After design mockups are finalized
+
+### Next Steps:
+- I'll wait for design handoff
+- I'll create feature branches for each component
+- I'll open PRs for code review
+
+Feel free to reach out with questions! 💬`;
+            
+            await github.rest.issues.createComment({
+              owner: owner,
+              repo: repo,
+              issue_number: issueNumber,
+              body: frontendResponse
+            });
+
+      - name: Assign and respond to Designer issues
+        if: contains(github.event.issue.labels.*.name, 'designer')
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issueNumber = context.issue.number;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            
+            // Assign issue
+            await github.rest.issues.addAssignees({
+              owner: owner,
+              repo: repo,
+              issue_number: issueNumber,
+              assignees: ['imattos78']
+            });
+            
+            // Add comment with agent response
+            const designerResponse = `## 🎨 Designer Agent Response
+
+I've reviewed this design task and I'm ready to create beautiful, accessible mockups.
+
+### What I'll deliver:
+- Complete information architecture and user flows
+- Design tokens (colors, typography, spacing, shadows)
+- High-fidelity mockups for all screens
+- Dark/Light mode variants
+- WCAG 2.1 AA accessibility compliance verification
+- Comprehensive handoff documentation
+
+### My Design Process:
+1. **Discovery** - Understand requirements and user needs
+2. **Wireframing** - Low-fi layouts and flows
+3. **Design System** - Create tokens and component specs
+4. **Hi-Fi Mockups** - Detailed, polished designs
+5. **Handoff** - Complete specs and assets for developers
+
+### Timeline:
+- Estimated effort: [To be determined based on scope]
+- Ready to start: Immediately
+
+### Deliverables:
+- Figma design file with all components
+- Design tokens export
+- Accessibility validation report
+- Implementation specifications
+
+Let me know if you have any design questions! 🎨`;
+            
+            await github.rest.issues.createComment({
+              owner: owner,
+              repo: repo,
+              issue_number: issueNumber,
+              body: designerResponse
+            });
+
+      - name: Assign and respond to QA Tester issues
+        if: contains(github.event.issue.labels.*.name, 'qa-tester')
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issueNumber = context.issue.number;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            
+            // Assign issue
+            await github.rest.issues.addAssignees({
+              owner: owner,
+              repo: repo,
+              issue_number: issueNumber,
+              assignees: ['imattos78']
+            });
+            
+            // Add comment with agent response
+            const testerResponse = `## 🧪 QA Tester Agent Response
+
+I've reviewed this testing task and I'm ready to ensure quality.
+
+### What I'll do:
+- Write comprehensive unit tests
+- Create end-to-end tests for features
+- Perform performance and load testing
+- Identify and document edge cases
+- Validate accessibility compliance
+- Generate test coverage reports
+- Create test documentation
+
+### My Testing Strategy:
+1. **Unit Testing** - Test individual functions and components
+2. **Integration Testing** - Test component interactions
+3. **E2E Testing** - Test full user workflows
+4. **Performance Testing** - Validate load times and metrics
+5. **Accessibility Testing** - Ensure WCAG 2.1 AA compliance
+6. **Edge Case Testing** - Cover error scenarios
+
+### Timeline:
+- Estimated effort: [To be determined based on feature scope]
+- Ready to start: When implementation code is ready
+
+### Coverage Goals:
+- Target: >= 80% code coverage
+- Critical paths: 100% coverage
+
+Let's ensure quality! 🎯`;
+            
+            await github.rest.issues.createComment({
+              owner: owner,
+              repo: repo,
+              issue_number: issueNumber,
+              body: testerResponse
+            });
+
+      - name: Assign and respond to Marketing/SEO issues
+        if: contains(github.event.issue.labels.*.name, 'marketing-seo')
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issueNumber = context.issue.number;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            
+            // Assign issue
+            await github.rest.issues.addAssignees({
+              owner: owner,
+              repo: repo,
+              issue_number: issueNumber,
+              assignees: ['imattos78']
+            });
+            
+            // Add comment with agent response
+            const marketingResponse = `## 📱 Marketing/SEO Agent Response
+
+I've reviewed this documentation task and I'm ready to create excellent content.
+
+### What I'll deliver:
+- Clear, well-structured documentation
+- SEO-optimized content for discoverability
+- User guides and tutorials
+- API endpoint documentation
+- Setup and configuration guides
+- Chrome Web Store listing optimization
+- Meta tags and structured data
+
+### My Content Strategy:
+1. **Planning** - Define audience and content structure
+2. **Writing** - Create clear, engaging content
+3. **SEO Optimization** - Research keywords, optimize for search
+4. **Formatting** - Proper headings, sections, examples
+5. **Assets** - Add diagrams, screenshots, code samples
+6. **Review** - Proofread and finalize
+
+### Timeline:
+- Estimated effort: [To be determined based on content volume]
+- Ready to start: When features are ready for documentation
+
+### Content Types:
+- README and quick start guides
+- API documentation
+- Troubleshooting guides
+- Feature announcements
+- User tutorials
+
+Let's make this discoverable! 🚀`;
+            
+            await github.rest.issues.createComment({
+              owner: owner,
+              repo: repo,
+              issue_number: issueNumber,
+              body: marketingResponse
+            });
+
+      - name: Assign and respond to Product Manager issues
+        if: contains(github.event.issue.labels.*.name, 'product-manager')
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issueNumber = context.issue.number;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            
+            // Assign issue
+            await github.rest.issues.addAssignees({
+              owner: owner,
+              repo: repo,
+              issue_number: issueNumber,
+              assignees: ['imattos78']
+            });
+            
+            // Add comment with agent response
+            const productResponse = `## 📊 Product Manager Agent Response
+
+I've reviewed this product initiative and I'm coordinating the team.
+
+### What I'll do:
+- Define clear acceptance criteria
+- Create detailed user stories
+- Prioritize work for the team
+- Coordinate cross-functional efforts
+- Track progress and blockers
+- Gather feedback and iterate
+- Plan product roadmap and releases
+
+### My Process:
+1. **Requirements** - Clarify needs and success metrics
+2. **Planning** - Break down into actionable tasks
+3. **Prioritization** - Work with design, backend, frontend
+4. **Tracking** - Monitor progress and dependencies
+5. **Validation** - Ensure user value is delivered
+6. **Iteration** - Gather feedback and improve
+
+### Timeline:
+- Estimated effort: [To be determined based on complexity]
+- Kickoff: Ready to align with team
+- Release: [Target date to be confirmed]
+
+### Success Metrics:
+- All requirements met
+- Team aligned and unblocked
+- Quality standards achieved
+- User satisfaction high
+
+Let's ship great products! 🎯`;
+            
+            await github.rest.issues.createComment({
+              owner: owner,
+              repo: repo,
+              issue_number: issueNumber,
+              body: productResponse
+            });
