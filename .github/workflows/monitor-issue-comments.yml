@@ -27,6 +27,8 @@ jobs:
               per_page: 100
             });
             const allComments = commentsResponse.data;
+            const allTextSources = [issue.body || '', ...allComments.map((entry) => entry.body || '')];
+            const combinedText = allTextSources.join('\n');
 
             function labelsToText(labels) {
               return labels.map((label) => label.name).join(', ') || 'None';
@@ -40,12 +42,139 @@ jobs:
             }
 
             function getLinkStatus() {
-              const sources = [issue.body || '', ...allComments.map((entry) => entry.body || '')].join('\n');
-
               return {
-                hasFigma: /https?:\/\/[^\s]*figma\.com/i.test(sources),
-                hasDesignDoc: /design token|wireframe|mockup|prototype|handoff/i.test(sources)
+                hasFigma: /https?:\/\/[^\s]*figma\.com/i.test(combinedText),
+                hasDesignDoc: /design token|wireframe|mockup|prototype|handoff/i.test(combinedText)
               };
+            }
+
+            function unique(values) {
+              return [...new Set(values.filter(Boolean))];
+            }
+
+            function extractPrNumbersFromPullUrls(text) {
+              const regex = /github\.com\/[\w.-]+\/[\w.-]+\/pull\/(\d+)/gi;
+              const matches = [];
+              let match;
+
+              while ((match = regex.exec(text)) !== null) {
+                matches.push(Number(match[1]));
+              }
+
+              return unique(matches);
+            }
+
+            function extractIssueStyleReferences(text) {
+              const regex = /(^|[^\w])#(\d+)\b/gm;
+              const matches = [];
+              let match;
+
+              while ((match = regex.exec(text)) !== null) {
+                matches.push(Number(match[2]));
+              }
+
+              return unique(matches);
+            }
+
+            function extractBranchReferences(text) {
+              const branchMentions = [];
+
+              const treeUrlRegex = /github\.com\/[\w.-]+\/[\w.-]+\/tree\/([^\s)\]]+)/gi;
+              let treeMatch;
+              while ((treeMatch = treeUrlRegex.exec(text)) !== null) {
+                branchMentions.push(decodeURIComponent(treeMatch[1]));
+              }
+
+              const directBranchRegex = /(?:^|\n|\r|\s)(?:branch|source\s+branch|head)\s*[:=]\s*([A-Za-z0-9._\/-]+)/gi;
+              let directMatch;
+              while ((directMatch = directBranchRegex.exec(text)) !== null) {
+                branchMentions.push(directMatch[1]);
+              }
+
+              return unique(branchMentions);
+            }
+
+            async function detectLinkedPullRequests() {
+              const prNumbersFromUrls = extractPrNumbersFromPullUrls(combinedText);
+              const candidateRefs = extractIssueStyleReferences(combinedText)
+                .filter((number) => number !== issueNumber)
+                .slice(0, 20);
+
+              const detectedPrNumbers = [...prNumbersFromUrls];
+
+              // Validate issue-style references and keep only those that are actual PRs.
+              for (const candidate of candidateRefs) {
+                try {
+                  const issueRef = await github.rest.issues.get({
+                    owner,
+                    repo,
+                    issue_number: candidate
+                  });
+
+                  if (issueRef.data.pull_request) {
+                    detectedPrNumbers.push(candidate);
+                  }
+                } catch (error) {
+                  // Ignore invalid references and continue processing other candidates.
+                }
+              }
+
+              const uniquePrNumbers = unique(detectedPrNumbers).slice(0, 10);
+              const linkedPrs = [];
+
+              for (const prNumber of uniquePrNumbers) {
+                try {
+                  const pr = await github.rest.pulls.get({
+                    owner,
+                    repo,
+                    pull_number: prNumber
+                  });
+
+                  linkedPrs.push({
+                    number: pr.number,
+                    state: pr.state,
+                    url: pr.html_url,
+                    headRef: pr.head?.ref || null
+                  });
+                } catch (error) {
+                  // If PR details cannot be fetched, still keep a minimal reference.
+                  linkedPrs.push({
+                    number: prNumber,
+                    state: 'unknown',
+                    url: `https://github.com/${owner}/${repo}/pull/${prNumber}`,
+                    headRef: null
+                  });
+                }
+              }
+
+              return linkedPrs;
+            }
+
+            function summarizeLinkedPrs(linkedPrs) {
+              if (!linkedPrs.length) {
+                return 'None detected';
+              }
+
+              return linkedPrs
+                .slice(0, 3)
+                .map((pr) => {
+                  const headPart = pr.headRef ? ` [${pr.headRef}]` : '';
+                  return `#${pr.number} (${pr.state})${headPart}`;
+                })
+                .join(', ');
+            }
+
+            function summarizeBranches(branchesFromText, linkedPrs) {
+              const branchCandidates = unique([
+                ...branchesFromText,
+                ...linkedPrs.map((pr) => pr.headRef).filter(Boolean)
+              ]);
+
+              if (!branchCandidates.length) {
+                return 'None detected';
+              }
+
+              return branchCandidates.slice(0, 5).join(', ');
             }
 
             function getLatestHumanComment() {
@@ -68,11 +197,17 @@ jobs:
             const checklist = getChecklistProgress(issue.body);
             const links = getLinkStatus();
             const latestHumanComment = getLatestHumanComment();
+            const linkedPrs = await detectLinkedPullRequests();
+            const branchesFromText = extractBranchReferences(combinedText);
+            const linkedPrSummary = summarizeLinkedPrs(linkedPrs);
+            const branchSummary = summarizeBranches(branchesFromText, linkedPrs);
             const baseStatus = [
               `- Current issue: #${issueNumber}`,
               `- Labels: ${labelsToText(issue.labels)}`,
               `- Assignee: ${issue.assignee?.login || 'Unassigned'}`,
               `- Checklist progress in issue body: ${checklist.completed}/${checklist.total} items checked`,
+              `- Linked PRs detected: ${linkedPrSummary}`,
+              `- Branch references detected: ${branchSummary}`,
               `- Figma link present: ${links.hasFigma ? 'Yes' : 'No'}`,
               `- Design-related links or keywords present: ${links.hasDesignDoc ? 'Yes' : 'No'}`,
               `- Latest human comment: ${latestHumanComment}`
