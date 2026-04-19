@@ -1,0 +1,229 @@
+name: Monitor Issue Comments & Agent Mentions
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+jobs:
+  respond-to-mentions:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+    steps:
+      - name: Check for agent mentions and respond
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const comment = context.payload.comment.body;
+            const issueNumber = context.issue.number;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const issue = context.payload.issue;
+            
+            // Backend Developer mention
+            if (comment.includes('@backend-agent') || comment.includes('@backend-dev')) {
+              const backendResponse = `## 🔧 Backend Developer - Follow-up Response
+
+I've reviewed your message and the current issue status.
+
+### Status Update:
+- Current issue: #${issueNumber}
+- Labels: ${issue.labels.map(l => l.name).join(', ')}
+- Assignee: ${issue.assignee?.login || 'Unassigned'}
+
+### My Response:
+I'm ready to proceed with the next steps. Please provide any additional context or blockers.
+
+### Next Actions:
+1. Confirm requirements clarity
+2. Identify any dependencies
+3. Create implementation branch
+4. Begin development
+
+Let me know if you need any clarification! 💬`;
+              
+              await github.rest.issues.createComment({
+                owner: owner,
+                repo: repo,
+                issue_number: issueNumber,
+                body: backendResponse
+              });
+            }
+            
+            // Frontend Developer mention
+            if (comment.includes('@frontend-agent') || comment.includes('@frontend-dev')) {
+              const frontendResponse = `## 🖥️ Frontend Developer - Follow-up Response
+
+I've reviewed your message and the current issue status.
+
+### Status Update:
+- Current issue: #${issueNumber}
+- Labels: ${issue.labels.map(l => l.name).join(', ')}
+- Assignee: ${issue.assignee?.login || 'Unassigned'}
+
+### My Response:
+I'm ready to proceed with component implementation. Please confirm design handoff status.
+
+### Next Actions:
+1. Review design specifications
+2. Set up component structure
+3. Create Storybook stories
+4. Begin implementation
+
+Let me know if you need any clarification! 💬`;
+              
+              await github.rest.issues.createComment({
+                owner: owner,
+                repo: repo,
+                issue_number: issueNumber,
+                body: frontendResponse
+              });
+            }
+            
+            // Designer mention
+            if (comment.includes('@designer-agent') || comment.includes('@designer')) {
+              const designerResponse = `## 🎨 Designer - Follow-up Response
+
+I've reviewed your message and the current issue status.
+
+### Status Update:
+- Current issue: #${issueNumber}
+- Labels: ${issue.labels.map(l => l.name).join(', ')}
+- Assignee: ${issue.assignee?.login || 'Unassigned'}
+
+### My Response:
+Thanks for reaching out! I'm tracking progress on this design task.
+
+### Current Deliverables:
+- ✅ Discovery & Requirements Analysis
+- 🔄 Wireframes & Information Architecture
+- ⏳ Design System & Components
+- ⏳ Hi-Fi Mockups
+- ⏳ Handoff Documentation
+
+### Timeline Status:
+- Started: [When work began]
+- Target Completion: [Expected date]
+- Current Progress: On track / Needs adjustment
+
+Please let me know what you need! 🎨`;
+              
+              await github.rest.issues.createComment({
+                owner: owner,
+                repo: repo,
+                issue_number: issueNumber,
+                body: designerResponse
+              });
+            }
+            
+            // QA Tester mention
+            if (comment.includes('@tester-agent') || comment.includes('@qa-tester')) {
+              const testerResponse = `## 🧪 QA Tester - Follow-up Response
+
+I've reviewed your message and the current issue status.
+
+### Status Update:
+- Current issue: #${issueNumber}
+- Labels: ${issue.labels.map(l => l.name).join(', ')}
+- Assignee: ${issue.assignee?.login || 'Unassigned'}
+
+### My Response:
+I'm ready to proceed with testing strategy and coverage planning.
+
+### Testing Deliverables:
+- ⏳ Test Strategy Document
+- ⏳ Unit Tests
+- ⏳ Integration Tests
+- ⏳ E2E Tests
+- ⏳ Coverage Report
+
+### Next Actions:
+1. Define test scenarios
+2. Create test cases
+3. Set up test infrastructure
+4. Begin test execution
+
+Let me know what you need! 🎯`;
+              
+              await github.rest.issues.createComment({
+                owner: owner,
+                repo: repo,
+                issue_number: issueNumber,
+                body: testerResponse
+              });
+            }
+            
+            // Marketing mention
+            if (comment.includes('@marketing-agent') || comment.includes('@marketing-seo')) {
+              const marketingResponse = `## 📱 Marketing/SEO - Follow-up Response
+
+I've reviewed your message and the current issue status.
+
+### Status Update:
+- Current issue: #${issueNumber}
+- Labels: ${issue.labels.map(l => l.name).join(', ')}
+- Assignee: ${issue.assignee?.login || 'Unassigned'}
+
+### My Response:
+I'm ready to create excellent documentation and content.
+
+### Documentation Deliverables:
+- ⏳ Project README
+- ⏳ Setup Guides
+- ⏳ API Documentation
+- ⏳ User Guides
+- ⏳ SEO Optimization
+
+### Next Actions:
+1. Gather feature specifications
+2. Plan content structure
+3. Write initial documentation
+4. Optimize for SEO
+
+Let me know what you need! 🚀`;
+              
+              await github.rest.issues.createComment({
+                owner: owner,
+                repo: repo,
+                issue_number: issueNumber,
+                body: marketingResponse
+              });
+            }
+            
+            // Product Manager mention
+            if (comment.includes('@product-agent') || comment.includes('@product-manager')) {
+              const productResponse = `## 📊 Product Manager - Follow-up Response
+
+I've reviewed your message and the current issue status.
+
+### Status Update:
+- Current issue: #${issueNumber}
+- Labels: ${issue.labels.map(l => l.name).join(', ')}
+- Assignee: ${issue.assignee?.login || 'Unassigned'}
+
+### My Response:
+I'm coordinating the team and tracking progress toward our goals.
+
+### Current Tasks:
+- ✅ Requirements Definition
+- 🔄 Team Alignment
+- 🔄 Dependency Tracking
+- ⏳ Progress Monitoring
+- ⏳ Stakeholder Updates
+
+### Next Actions:
+1. Confirm blockers and dependencies
+2. Adjust timeline if needed
+3. Prepare team sync
+4. Update roadmap
+
+Let me know what you need! 🎯`;
+              
+              await github.rest.issues.createComment({
+                owner: owner,
+                repo: repo,
+                issue_number: issueNumber,
+                body: productResponse
+              });
+            }
