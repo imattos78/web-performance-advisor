@@ -20,10 +20,67 @@ jobs:
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const issue = context.payload.issue;
+            const commentsResponse = await github.rest.issues.listComments({
+              owner,
+              repo,
+              issue_number: issueNumber,
+              per_page: 100
+            });
+            const allComments = commentsResponse.data;
+
+            function labelsToText(labels) {
+              return labels.map((label) => label.name).join(', ') || 'None';
+            }
+
+            function getChecklistProgress(markdown) {
+              const body = markdown || '';
+              const total = (body.match(/- \[(?: |x|X)\]/g) || []).length;
+              const completed = (body.match(/- \[(?:x|X)\]/g) || []).length;
+              return { completed, total };
+            }
+
+            function getLinkStatus() {
+              const sources = [issue.body || '', ...allComments.map((entry) => entry.body || '')].join('\n');
+
+              return {
+                hasFigma: /https?:\/\/[^\s]*figma\.com/i.test(sources),
+                hasDesignDoc: /design token|wireframe|mockup|prototype|handoff/i.test(sources)
+              };
+            }
+
+            function getLatestHumanComment() {
+              const latest = [...allComments]
+                .reverse()
+                .find((entry) => {
+                  const login = entry.user?.login || '';
+                  return login !== 'github-actions[bot]' && login !== 'github-actions';
+                });
+
+              if (!latest) {
+                return 'No prior human comments found.';
+              }
+
+              const normalized = (latest.body || '').replace(/\s+/g, ' ').trim();
+              const excerpt = normalized.length > 160 ? `${normalized.slice(0, 157)}...` : normalized;
+              return `@${latest.user.login}: ${excerpt}`;
+            }
+
+            const checklist = getChecklistProgress(issue.body);
+            const links = getLinkStatus();
+            const latestHumanComment = getLatestHumanComment();
+            const baseStatus = [
+              `- Current issue: #${issueNumber}`,
+              `- Labels: ${labelsToText(issue.labels)}`,
+              `- Assignee: ${issue.assignee?.login || 'Unassigned'}`,
+              `- Checklist progress in issue body: ${checklist.completed}/${checklist.total} items checked`,
+              `- Figma link present: ${links.hasFigma ? 'Yes' : 'No'}`,
+              `- Design-related links or keywords present: ${links.hasDesignDoc ? 'Yes' : 'No'}`,
+              `- Latest human comment: ${latestHumanComment}`
+            ].join('\n');
             
             // Backend Developer mention
             if (comment.includes('@backend-agent') || comment.includes('@backend-dev')) {
-              const backendResponse = `## 🔧 Backend Developer - Follow-up Response\n\nI've reviewed your message and the current issue status.\n\n**Status Update:**\n- Current issue: #${issueNumber}\n- Labels: ${issue.labels.map((label) => label.name).join(', ')}\n- Assignee: ${issue.assignee?.login || 'Unassigned'}\n\n**My Response:**\nI'm ready to proceed with the next steps. Please provide any additional context or blockers.\n\n**Next Actions:**\n1. Confirm requirements clarity\n2. Identify any dependencies\n3. Create implementation branch\n4. Begin development\n\nLet me know if you need any clarification! 💬`;
+              const backendResponse = `## 🔧 Backend Developer - Follow-up Response\n\nI've reviewed your message and the current issue data.\n\n**Verified Status:**\n${baseStatus}\n\n**My Response:**\nI can only confirm what is visible in the issue thread from this workflow. No implementation progress is inferred unless it is documented in the issue.\n\n**Next Actions:**\n1. Confirm backend scope and acceptance criteria in the issue\n2. Link any active PR or branch if work has started\n3. Call out blockers or dependencies explicitly\n4. Update the issue checklist as implementation progresses\n\nLet me know if you need a more specific backend status check. 💬`;
               
               await github.rest.issues.createComment({
                 owner: owner,
@@ -35,7 +92,7 @@ jobs:
             
             // Frontend Developer mention
             if (comment.includes('@frontend-agent') || comment.includes('@frontend-dev')) {
-              const frontendResponse = `## 🖥️ Frontend Developer - Follow-up Response\n\nI've reviewed your message and the current issue status.\n\n**Status Update:**\n- Current issue: #${issueNumber}\n- Labels: ${issue.labels.map((label) => label.name).join(', ')}\n- Assignee: ${issue.assignee?.login || 'Unassigned'}\n\n**My Response:**\nI'm ready to proceed with component implementation. Please confirm design handoff status.\n\n**Next Actions:**\n1. Review design specifications\n2. Set up component structure\n3. Create Storybook stories\n4. Begin implementation\n\nLet me know if you need any clarification! 💬`;
+              const frontendResponse = `## 🖥️ Frontend Developer - Follow-up Response\n\nI've reviewed your message and the current issue data.\n\n**Verified Status:**\n${baseStatus}\n\n**My Response:**\nI can confirm issue metadata and discussion state, but I am not assuming design handoff or implementation progress unless it is linked in the thread.\n\n**Next Actions:**\n1. Link the approved design source if it exists\n2. Link any implementation PR or branch\n3. Note which screens or components are in progress\n4. Update the issue checklist to reflect actual shipped work\n\nLet me know if you need a more specific frontend status check. 💬`;
               
               await github.rest.issues.createComment({
                 owner: owner,
@@ -47,7 +104,7 @@ jobs:
             
             // Designer mention
             if (comment.includes('@designer-agent') || comment.includes('@designer')) {
-              const designerResponse = `## 🎨 Designer - Follow-up Response\n\nI've reviewed your message and the current issue status.\n\n**Status Update:**\n- Current issue: #${issueNumber}\n- Labels: ${issue.labels.map((label) => label.name).join(', ')}\n- Assignee: ${issue.assignee?.login || 'Unassigned'}\n\n**My Response:**\nThanks for reaching out! I'm tracking progress on this design task.\n\n**Current Deliverables:**\n- Discovery and requirements analysis complete\n- Wireframes and information architecture in progress\n- Design system and components pending\n- Hi-Fi mockups pending\n- Handoff documentation pending\n\n**Timeline Status:**\n- Started: To be confirmed\n- Target Completion: To be confirmed\n- Current Progress: On track or needs adjustment\n\nPlease let me know what you need! 🎨`;
+              const designerResponse = `## 🎨 Designer - Follow-up Response\n\nI've reviewed your message and the current issue data.\n\n**Verified Status:**\n${baseStatus}\n\n**My Response:**\nThis workflow now reports only verifiable status. I can confirm issue metadata, checklist progress, discussion history, and whether a Figma link is present. I am not claiming wireframes, mockups, tokens, or handoff progress unless those artifacts are linked or checked off in the issue.\n\n**Current Design Signals:**\n- Day-by-day progress must be inferred from checklist items or linked artifacts\n- Figma/design workspace is ${links.hasFigma ? 'linked in the issue thread' : 'not currently linked in the issue thread'}\n- Deliverable completion cannot be confirmed beyond the checked items count above\n\n**Recommended Next Actions:**\n1. Share the Figma or design workspace link in the issue\n2. Mark completed deliverables directly in the issue checklist\n3. Add a brief daily update with completed screens, blockers, and next milestone\n4. Link any handoff docs or token exports once available\n\nPlease let me know what you need! 🎨`;
               
               await github.rest.issues.createComment({
                 owner: owner,
@@ -59,7 +116,7 @@ jobs:
             
             // QA Tester mention
             if (comment.includes('@tester-agent') || comment.includes('@qa-tester')) {
-              const testerResponse = `## 🧪 QA Tester - Follow-up Response\n\nI've reviewed your message and the current issue status.\n\n**Status Update:**\n- Current issue: #${issueNumber}\n- Labels: ${issue.labels.map((label) => label.name).join(', ')}\n- Assignee: ${issue.assignee?.login || 'Unassigned'}\n\n**My Response:**\nI'm ready to proceed with testing strategy and coverage planning.\n\n**Testing Deliverables:**\n- Test strategy document pending\n- Unit tests pending\n- Integration tests pending\n- E2E tests pending\n- Coverage report pending\n\n**Next Actions:**\n1. Define test scenarios\n2. Create test cases\n3. Set up test infrastructure\n4. Begin test execution\n\nLet me know what you need! 🎯`;
+              const testerResponse = `## 🧪 QA Tester - Follow-up Response\n\nI've reviewed your message and the current issue data.\n\n**Verified Status:**\n${baseStatus}\n\n**My Response:**\nI can confirm thread state, but I am not asserting test progress unless test assets, PRs, or checklist updates are linked in the issue.\n\n**Next Actions:**\n1. Link test plans, PRs, or reports if they exist\n2. State which flows are covered and which are blocked\n3. Update the issue checklist with verified testing milestones\n4. Call out any known regressions or gaps explicitly\n\nLet me know what you need! 🎯`;
               
               await github.rest.issues.createComment({
                 owner: owner,
@@ -71,7 +128,7 @@ jobs:
             
             // Marketing mention
             if (comment.includes('@marketing-agent') || comment.includes('@marketing-seo')) {
-              const marketingResponse = `## 📱 Marketing/SEO - Follow-up Response\n\nI've reviewed your message and the current issue status.\n\n**Status Update:**\n- Current issue: #${issueNumber}\n- Labels: ${issue.labels.map((label) => label.name).join(', ')}\n- Assignee: ${issue.assignee?.login || 'Unassigned'}\n\n**My Response:**\nI'm ready to create excellent documentation and content.\n\n**Documentation Deliverables:**\n- Project README pending\n- Setup guides pending\n- API documentation pending\n- User guides pending\n- SEO optimization pending\n\n**Next Actions:**\n1. Gather feature specifications\n2. Plan content structure\n3. Write initial documentation\n4. Optimize for SEO\n\nLet me know what you need! 🚀`;
+              const marketingResponse = `## 📱 Marketing/SEO - Follow-up Response\n\nI've reviewed your message and the current issue data.\n\n**Verified Status:**\n${baseStatus}\n\n**My Response:**\nI can confirm issue metadata and linked discussion, but I am not claiming documentation or SEO progress unless artifacts are linked in the thread.\n\n**Next Actions:**\n1. Link drafts, docs, or store copy if they exist\n2. Identify missing content assets explicitly\n3. Update the issue checklist with verified documentation milestones\n4. Note blockers that depend on product or design sign-off\n\nLet me know what you need! 🚀`;
               
               await github.rest.issues.createComment({
                 owner: owner,
@@ -83,7 +140,7 @@ jobs:
             
             // Product Manager mention
             if (comment.includes('@product-agent') || comment.includes('@product-manager')) {
-              const productResponse = `## 📊 Product Manager - Follow-up Response\n\nI've reviewed your message and the current issue status.\n\n**Status Update:**\n- Current issue: #${issueNumber}\n- Labels: ${issue.labels.map((label) => label.name).join(', ')}\n- Assignee: ${issue.assignee?.login || 'Unassigned'}\n\n**My Response:**\nI'm coordinating the team and tracking progress toward our goals.\n\n**Current Tasks:**\n- Requirements definition complete\n- Team alignment in progress\n- Dependency tracking in progress\n- Progress monitoring pending\n- Stakeholder updates pending\n\n**Next Actions:**\n1. Confirm blockers and dependencies\n2. Adjust timeline if needed\n3. Prepare team sync\n4. Update roadmap\n\nLet me know what you need! 🎯`;
+              const productResponse = `## 📊 Product Manager - Follow-up Response\n\nI've reviewed your message and the current issue data.\n\n**Verified Status:**\n${baseStatus}\n\n**My Response:**\nI can confirm issue metadata, checklist completion, and recent discussion. I am not claiming team progress beyond what is documented in the issue.\n\n**Next Actions:**\n1. Confirm blockers and dependencies in writing\n2. Update the checklist to reflect completed milestones\n3. Link active PRs, design docs, or specs from the thread\n4. Post the next milestone and target date explicitly\n\nLet me know what you need! 🎯`;
               
               await github.rest.issues.createComment({
                 owner: owner,
