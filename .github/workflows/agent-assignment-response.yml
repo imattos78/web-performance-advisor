@@ -13,14 +13,13 @@ jobs:
     steps:
       - name: Assign and respond to Backend Developer issues
         if: contains(github.event.issue.labels.*.name, 'backend-dev')
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const issueNumber = context.issue.number;
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             
-            // Assign issue
             await github.rest.issues.addAssignees({
               owner: owner,
               repo: repo,
@@ -28,34 +27,7 @@ jobs:
               assignees: ['imattos78']
             });
             
-            // Add comment with agent response
-            const backendResponse = `## 🔧 Backend Developer Agent Response
-
-I've reviewed this task and I'm ready to start working on it.
-
-### What I'll do:
-- Design and implement the required API endpoints
-- Optimize performance and database queries
-- Ensure proper error handling and validation
-- Write comprehensive backend tests
-- Provide clear documentation for frontend integration
-
-### My Approach:
-1. **Analysis Phase** - Understand requirements and dependencies
-2. **Design Phase** - Plan API architecture and data models
-3. **Implementation Phase** - Write clean, tested code
-4. **Documentation Phase** - Create API specs and integration guide
-
-### Timeline:
-- Estimated effort: [To be determined based on scope]
-- Ready to start: Immediately
-
-### Next Steps:
-- I'll create a branch and start implementation
-- I'll keep updates in this issue thread
-- I'll open a PR when ready for review
-
-Feel free to ask any questions! 💬`;
+            const backendResponse = '## 🔧 Backend Developer Agent Response\n\nI\'ve reviewed this task and I\'m ready to start working on it.\n\n**What I\'ll do:**\n- Design and implement the required API endpoints\n- Optimize performance and database queries\n- Ensure proper error handling and validation\n- Write comprehensive backend tests\n- Provide clear documentation for frontend integration\n\n**My Approach:**\n1. Analysis Phase - Understand requirements and dependencies\n2. Design Phase - Plan API architecture and data models\n3. Implementation Phase - Write clean, tested code\n4. Documentation Phase - Create API specs and integration guide\n\n**Timeline:**\n- Estimated effort: To be determined based on scope\n- Ready to start: Immediately\n\n**Next Steps:**\n- I\'ll create a branch and start implementation\n- I\'ll keep updates in this issue thread\n- I\'ll open a PR when ready for review\n\nFeel free to ask any questions! 💬';
             
             await github.rest.issues.createComment({
               owner: owner,
@@ -66,14 +38,13 @@ Feel free to ask any questions! 💬`;
 
       - name: Assign and respond to Frontend Developer issues
         if: contains(github.event.issue.labels.*.name, 'frontend-dev')
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const issueNumber = context.issue.number;
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             
-            // Assign issue
             await github.rest.issues.addAssignees({
               owner: owner,
               repo: repo,
@@ -81,36 +52,7 @@ Feel free to ask any questions! 💬`;
               assignees: ['imattos78']
             });
             
-            // Add comment with agent response
-            const frontendResponse = `## 🖥️ Frontend Developer Agent Response
-
-I've reviewed this task and I'm ready to implement the UI/components.
-
-### What I'll do:
-- Convert design mockups into React components
-- Implement responsive layouts with Tailwind CSS
-- Integrate with backend APIs
-- Ensure accessibility (WCAG 2.1 AA) compliance
-- Write component documentation and stories
-- Optimize performance and bundle size
-
-### My Approach:
-1. **Setup Phase** - Review designs and requirements
-2. **Component Phase** - Build reusable component library
-3. **Integration Phase** - Connect to backend APIs
-4. **Testing Phase** - Write component and integration tests
-5. **Polish Phase** - Accessibility and performance optimization
-
-### Timeline:
-- Estimated effort: [To be determined based on design complexity]
-- Ready to start: After design mockups are finalized
-
-### Next Steps:
-- I'll wait for design handoff
-- I'll create feature branches for each component
-- I'll open PRs for code review
-
-Feel free to reach out with questions! 💬`;
+            const frontendResponse = '## 🖥️ Frontend Developer Agent Response\n\nI\'ve reviewed this task and I\'m ready to implement the UI/components.\n\n**What I\'ll do:**\n- Convert design mockups into React components\n- Implement responsive layouts with Tailwind CSS\n- Integrate with backend APIs\n- Ensure accessibility (WCAG 2.1 AA) compliance\n- Write component documentation and stories\n- Optimize performance and bundle size\n\n**My Approach:**\n1. Setup Phase - Review designs and requirements\n2. Component Phase - Build reusable component library\n3. Integration Phase - Connect to backend APIs\n4. Testing Phase - Write component and integration tests\n5. Polish Phase - Accessibility and performance optimization\n\n**Timeline:**\n- Estimated effort: To be determined based on design complexity\n- Ready to start: After design mockups are finalized\n\n**Next Steps:**\n- I\'ll wait for design handoff\n- I\'ll create feature branches for each component\n- I\'ll open PRs for code review\n\nFeel free to reach out with questions! 💬';
             
             await github.rest.issues.createComment({
               owner: owner,
@@ -121,14 +63,13 @@ Feel free to reach out with questions! 💬`;
 
       - name: Assign and respond to Designer issues
         if: contains(github.event.issue.labels.*.name, 'designer')
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const issueNumber = context.issue.number;
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             
-            // Assign issue
             await github.rest.issues.addAssignees({
               owner: owner,
               repo: repo,
@@ -136,37 +77,7 @@ Feel free to reach out with questions! 💬`;
               assignees: ['imattos78']
             });
             
-            // Add comment with agent response
-            const designerResponse = `## 🎨 Designer Agent Response
-
-I've reviewed this design task and I'm ready to create beautiful, accessible mockups.
-
-### What I'll deliver:
-- Complete information architecture and user flows
-- Design tokens (colors, typography, spacing, shadows)
-- High-fidelity mockups for all screens
-- Dark/Light mode variants
-- WCAG 2.1 AA accessibility compliance verification
-- Comprehensive handoff documentation
-
-### My Design Process:
-1. **Discovery** - Understand requirements and user needs
-2. **Wireframing** - Low-fi layouts and flows
-3. **Design System** - Create tokens and component specs
-4. **Hi-Fi Mockups** - Detailed, polished designs
-5. **Handoff** - Complete specs and assets for developers
-
-### Timeline:
-- Estimated effort: [To be determined based on scope]
-- Ready to start: Immediately
-
-### Deliverables:
-- Figma design file with all components
-- Design tokens export
-- Accessibility validation report
-- Implementation specifications
-
-Let me know if you have any design questions! 🎨`;
+            const designerResponse = '## 🎨 Designer Agent Response\n\nI\'ve reviewed this design task and I\'m ready to create beautiful, accessible mockups.\n\n**What I\'ll deliver:**\n- Complete information architecture and user flows\n- Design tokens (colors, typography, spacing, shadows)\n- High-fidelity mockups for all screens\n- Dark and Light mode variants\n- WCAG 2.1 AA accessibility compliance verification\n- Comprehensive handoff documentation\n\n**My Design Process:**\n1. Discovery - Understand requirements and user needs\n2. Wireframing - Low-fi layouts and flows\n3. Design System - Create tokens and component specs\n4. Hi-Fi Mockups - Detailed, polished designs\n5. Handoff - Complete specs and assets for developers\n\n**Timeline:**\n- Estimated effort: To be determined based on scope\n- Ready to start: Immediately\n\n**Deliverables:**\n- Figma design file with all components\n- Design tokens export\n- Accessibility validation report\n- Implementation specifications\n\nLet me know if you have any design questions! 🎨';
             
             await github.rest.issues.createComment({
               owner: owner,
@@ -177,14 +88,13 @@ Let me know if you have any design questions! 🎨`;
 
       - name: Assign and respond to QA Tester issues
         if: contains(github.event.issue.labels.*.name, 'qa-tester')
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const issueNumber = context.issue.number;
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             
-            // Assign issue
             await github.rest.issues.addAssignees({
               owner: owner,
               repo: repo,
@@ -192,37 +102,7 @@ Let me know if you have any design questions! 🎨`;
               assignees: ['imattos78']
             });
             
-            // Add comment with agent response
-            const testerResponse = `## 🧪 QA Tester Agent Response
-
-I've reviewed this testing task and I'm ready to ensure quality.
-
-### What I'll do:
-- Write comprehensive unit tests
-- Create end-to-end tests for features
-- Perform performance and load testing
-- Identify and document edge cases
-- Validate accessibility compliance
-- Generate test coverage reports
-- Create test documentation
-
-### My Testing Strategy:
-1. **Unit Testing** - Test individual functions and components
-2. **Integration Testing** - Test component interactions
-3. **E2E Testing** - Test full user workflows
-4. **Performance Testing** - Validate load times and metrics
-5. **Accessibility Testing** - Ensure WCAG 2.1 AA compliance
-6. **Edge Case Testing** - Cover error scenarios
-
-### Timeline:
-- Estimated effort: [To be determined based on feature scope]
-- Ready to start: When implementation code is ready
-
-### Coverage Goals:
-- Target: >= 80% code coverage
-- Critical paths: 100% coverage
-
-Let's ensure quality! 🎯`;
+            const testerResponse = '## 🧪 QA Tester Agent Response\n\nI\'ve reviewed this testing task and I\'m ready to ensure quality.\n\n**What I\'ll do:**\n- Write comprehensive unit tests\n- Create end-to-end tests for features\n- Perform performance and load testing\n- Identify and document edge cases\n- Validate accessibility compliance\n- Generate test coverage reports\n- Create test documentation\n\n**My Testing Strategy:**\n1. Unit Testing - Test individual functions and components\n2. Integration Testing - Test component interactions\n3. E2E Testing - Test full user workflows\n4. Performance Testing - Validate load times and metrics\n5. Accessibility Testing - Ensure WCAG 2.1 AA compliance\n6. Edge Case Testing - Cover error scenarios\n\n**Timeline:**\n- Estimated effort: To be determined based on feature scope\n- Ready to start: When implementation code is ready\n\n**Coverage Goals:**\n- Target: >= 80% code coverage\n- Critical paths: 100% coverage\n\nLet\'s ensure quality! 🎯';
             
             await github.rest.issues.createComment({
               owner: owner,
@@ -233,14 +113,13 @@ Let's ensure quality! 🎯`;
 
       - name: Assign and respond to Marketing/SEO issues
         if: contains(github.event.issue.labels.*.name, 'marketing-seo')
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const issueNumber = context.issue.number;
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             
-            // Assign issue
             await github.rest.issues.addAssignees({
               owner: owner,
               repo: repo,
@@ -248,40 +127,7 @@ Let's ensure quality! 🎯`;
               assignees: ['imattos78']
             });
             
-            // Add comment with agent response
-            const marketingResponse = `## 📱 Marketing/SEO Agent Response
-
-I've reviewed this documentation task and I'm ready to create excellent content.
-
-### What I'll deliver:
-- Clear, well-structured documentation
-- SEO-optimized content for discoverability
-- User guides and tutorials
-- API endpoint documentation
-- Setup and configuration guides
-- Chrome Web Store listing optimization
-- Meta tags and structured data
-
-### My Content Strategy:
-1. **Planning** - Define audience and content structure
-2. **Writing** - Create clear, engaging content
-3. **SEO Optimization** - Research keywords, optimize for search
-4. **Formatting** - Proper headings, sections, examples
-5. **Assets** - Add diagrams, screenshots, code samples
-6. **Review** - Proofread and finalize
-
-### Timeline:
-- Estimated effort: [To be determined based on content volume]
-- Ready to start: When features are ready for documentation
-
-### Content Types:
-- README and quick start guides
-- API documentation
-- Troubleshooting guides
-- Feature announcements
-- User tutorials
-
-Let's make this discoverable! 🚀`;
+            const marketingResponse = '## 📱 Marketing/SEO Agent Response\n\nI\'ve reviewed this documentation task and I\'m ready to create excellent content.\n\n**What I\'ll deliver:**\n- Clear, well-structured documentation\n- SEO-optimized content for discoverability\n- User guides and tutorials\n- API endpoint documentation\n- Setup and configuration guides\n- Chrome Web Store listing optimization\n- Meta tags and structured data\n\n**My Content Strategy:**\n1. Planning - Define audience and content structure\n2. Writing - Create clear, engaging content\n3. SEO Optimization - Research keywords, optimize for search\n4. Formatting - Proper headings, sections, examples\n5. Assets - Add diagrams, screenshots, code samples\n6. Review - Proofread and finalize\n\n**Timeline:**\n- Estimated effort: To be determined based on content volume\n- Ready to start: When features are ready for documentation\n\n**Content Types:**\n- README and quick start guides\n- API documentation\n- Troubleshooting guides\n- Feature announcements\n- User tutorials\n\nLet\'s make this discoverable! 🚀';
             
             await github.rest.issues.createComment({
               owner: owner,
@@ -292,14 +138,13 @@ Let's make this discoverable! 🚀`;
 
       - name: Assign and respond to Product Manager issues
         if: contains(github.event.issue.labels.*.name, 'product-manager')
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const issueNumber = context.issue.number;
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             
-            // Assign issue
             await github.rest.issues.addAssignees({
               owner: owner,
               repo: repo,
@@ -307,40 +152,7 @@ Let's make this discoverable! 🚀`;
               assignees: ['imattos78']
             });
             
-            // Add comment with agent response
-            const productResponse = `## 📊 Product Manager Agent Response
-
-I've reviewed this product initiative and I'm coordinating the team.
-
-### What I'll do:
-- Define clear acceptance criteria
-- Create detailed user stories
-- Prioritize work for the team
-- Coordinate cross-functional efforts
-- Track progress and blockers
-- Gather feedback and iterate
-- Plan product roadmap and releases
-
-### My Process:
-1. **Requirements** - Clarify needs and success metrics
-2. **Planning** - Break down into actionable tasks
-3. **Prioritization** - Work with design, backend, frontend
-4. **Tracking** - Monitor progress and dependencies
-5. **Validation** - Ensure user value is delivered
-6. **Iteration** - Gather feedback and improve
-
-### Timeline:
-- Estimated effort: [To be determined based on complexity]
-- Kickoff: Ready to align with team
-- Release: [Target date to be confirmed]
-
-### Success Metrics:
-- All requirements met
-- Team aligned and unblocked
-- Quality standards achieved
-- User satisfaction high
-
-Let's ship great products! 🎯`;
+            const productResponse = '## Product Manager Agent Response\n\nI\'ve reviewed this product initiative and I\'m coordinating the team.\n\n**What I\'ll do:**\n- Define clear acceptance criteria\n- Create detailed user stories\n- Prioritize work for the team\n- Coordinate cross-functional efforts\n- Track progress and blockers\n- Gather feedback and iterate\n- Plan product roadmap and releases\n\n**My Process:**\n1. **Requirements** - Clarify needs and success metrics\n2. **Planning** - Break down into actionable tasks\n3. **Prioritization** - Work with design, backend, frontend\n4. **Tracking** - Monitor progress and dependencies\n5. **Validation** - Ensure user value is delivered\n6. **Iteration** - Gather feedback and improve\n\n**Timeline:**\n- Estimated effort: [To be determined based on complexity]\n- Kickoff: Ready to align with team\n- Release: [Target date to be confirmed]\n\n**Success Metrics:**\n- All requirements met\n- Team aligned and unblocked\n- Quality standards achieved\n- User satisfaction high\n\nLet\'s ship great products!';
             
             await github.rest.issues.createComment({
               owner: owner,
