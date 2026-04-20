@@ -22,3 +22,4 @@ Thumbs.db
 # Project specific
 token.txt
 *.md
+!docs/*.md
